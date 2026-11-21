@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+build/version_info.txt
+build/*/
+dist/
+paket/
+*.spec.bak
+modelle/*.onnx
+modelle/*.tmp
+Bild-Freisteller-MK1.ini
+selbsttest.log
+.venv/

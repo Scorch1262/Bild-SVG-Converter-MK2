@@ -25,7 +25,7 @@ from . import svg_export as svgx
 from . import theme
 from .ansicht import HINTERGRUENDE, BildAnsicht
 from .bausteine import FarbKnopf, Karte, SchieberZeile, Segmente, trenner
-from .pfade import einstellungen_datei
+from .pfade import eigene_modelle_ordner, einstellungen_datei
 from .version import APP_TITEL, APP_VERSION
 
 BILD_ENDUNGEN = (".png", ".jpg", ".jpeg", ".bmp", ".webp", ".tif", ".tiff",
@@ -316,7 +316,7 @@ class Hauptfenster(QMainWindow):
         self.lbl_ki_hinweis = QLabel(
             "Läuft vollständig offline auf diesem Rechner." if self.modelle else
             "Kein KI-Modell gefunden. Eine .onnx-Datei (z. B. isnet-general-use.onnx) "
-            "in den Ordner „modelle“ neben der exe legen.")
+            f"in den Ordner {eigene_modelle_ordner()} legen.")
         self.lbl_ki_hinweis.setObjectName("Gedaempft" if self.modelle else "Hinweis")
         self.lbl_ki_hinweis.setWordWrap(True)
         lk.addWidget(self.lbl_ki_hinweis)
@@ -838,7 +838,7 @@ class Hauptfenster(QMainWindow):
             if modell is None:
                 self._status("Kein KI-Modell", "fehler")
                 self._meldung("Kein KI-Modell gefunden – bitte „Hintergrundfarbe“ verwenden "
-                              "oder ein Modell in den Ordner „modelle“ legen.")
+                              f"oder ein Modell in den Ordner {eigene_modelle_ordner()} legen.")
                 return
             self._status("KI stellt frei …", "arbeit")
             self._meldung(f"Freistellen mit {modell.anzeige} …")

@@ -1,6 +1,6 @@
 # Bild-SVG Converter MK2 — Windows-exe bauen: Mac lädt, Win10 baut
 
-**Offline-Build-Kit v1.0.0**
+**Offline-Build-Kit v1.1.0**
 
 Drei Skripte, drei Schritte. Python 3.11 (64-Bit) ist auf dem
 Windows-10-PC bereits installiert — dieses Kit kümmert sich um die
@@ -102,11 +102,11 @@ auf zwei Arten:
      GitHub-Workflow eine **einzelne exe** mit eingebautem KI-Modell
      und Programmsymbol,
    - startet die fertige exe mit `--selftest` und bricht ab, wenn der
-     Test fehlschlägt.
+     Test fehlschlägt oder neben der exe eine Datei entstanden ist.
 4. Ergebnis liegt in **`fertige_exe`**:
    ```
    fertige_exe/
-   └── Bild-SVG-Converter-MK2-v2.0.0-windows.exe
+   └── Bild-SVG-Converter-MK2-v2.1.0-windows.exe
    ```
    Der Build dauert einige Minuten.
 
@@ -120,11 +120,13 @@ nicht wiederholt werden, solange sich `requirements.txt` und
 
 ## exe benutzen
 
-1. Die exe in einen **eigenen Ordner** legen (z. B.
-   `C:\Programme_eigene\Bild-SVG-Converter\`) und starten.
-2. Daneben entsteht `Bild-SVG-Converter-MK2.ini` mit den Einstellungen.
+1. Die exe ist **eine einzige Datei** – einfach irgendwohin kopieren
+   (Desktop, USB-Stick, Netzlaufwerk) und starten. Neben der exe
+   entsteht nichts.
+2. Einstellungen liegen in `%APPDATA%\Bild-SVG-Converter-MK2\`.
 3. Der Start dauert einige Sekunden, weil die exe sich (inkl. KI-Modell)
-   entpackt. Das Programm arbeitet komplett offline.
+   in den Windows-Temp-Ordner entpackt. Das Programm arbeitet komplett
+   offline.
 
 ---
 

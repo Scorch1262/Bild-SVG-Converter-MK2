@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-#  Bild-SVG Converter MK2 - Offline-Build-Kit v1.0.0
+#  Bild-SVG Converter MK2 - Offline-Build-Kit v1.1.0
 #  Schritt 1 von 3 - auf dem MAC mit Internetverbindung ausfuehren.
 #
 #  Laedt alles, was der Windows-10-PC ohne Internet zum Bauen der
@@ -22,7 +22,7 @@
 set -e
 cd "$(dirname "$0")"
 
-KIT_VERSION="1.0.0"
+KIT_VERSION="1.1.0"
 PROJEKT="Bild-SVG-Converter-MK2"
 # Python-Version des Windows-10-PCs (Major.Minor)
 PY_VER="3.11"

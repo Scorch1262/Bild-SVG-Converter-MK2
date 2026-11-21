@@ -1,6 +1,6 @@
 # Bild-SVG Converter MK2
 
-Desktop-Programm für Windows: Bild per Drag & Drop hineinziehen, Hintergrund automatisch entfernen, Ergebnis als **SVG** (oder PNG) speichern. Läuft komplett offline – das KI-Modell ist in der exe enthalten.
+Desktop-Programm für Windows: Bild per Drag & Drop hineinziehen, Hintergrund automatisch entfernen, Ergebnis als **SVG** (oder PNG) speichern. Eine **einzige exe-Datei** ohne Installation und ohne Nebendateien – das KI-Modell ist eingebaut, das Programm läuft komplett offline.
 
 ![Bild-SVG Converter MK2](docs/screenshot.png)
 
@@ -21,7 +21,7 @@ Desktop-Programm für Windows: Bild per Drag & Drop hineinziehen, Hintergrund au
   | Vektor – Farbflächen | echte, skalierbare Vektorpfade | Logos, Grafiken, Icons |
   | Vektor – Silhouette | einfarbiger Umriss des Motivs | Schneideplotter, Laser, Stempel |
 - Optional auf das Motiv zuschneiden (mit Rand), zusätzlich Export als transparentes **PNG**
-- Einstellungen werden in `Bild-SVG-Converter-MK2.ini` neben der exe gespeichert
+- Einstellungen werden in `%APPDATA%\Bild-SVG-Converter-MK2\Bild-SVG-Converter-MK2.ini` gespeichert – neben der exe entsteht nichts
 
 ## Bedienung
 
@@ -42,11 +42,18 @@ Desktop-Programm für Windows: Bild per Drag & Drop hineinziehen, Hintergrund au
 
 ## Installation
 
-Unter **Releases** die Datei `Bild-SVG-Converter-MK2-vX.Y.Z-windows.zip` herunterladen, entpacken und `Bild-SVG-Converter-MK2.exe` starten. Keine Installation nötig.
+Unter **Releases** die Datei `Bild-SVG-Converter-MK2-vX.Y.Z-windows.exe` herunterladen und starten. Das ist die einzige Datei – keine Installation, keine Ordner, nichts daneben.
 
-Der erste Start dauert einige Sekunden, weil die exe ihre Bestandteile (inkl. KI-Modell) entpackt.
+Der Start dauert einige Sekunden, weil die exe ihre Bestandteile (inkl. KI-Modell) in den Windows-Temp-Ordner entpackt; dieser wird beim Beenden wieder gelöscht.
 
-Eigene oder weitere KI-Modelle (`.onnx`) können in den Ordner `modelle` neben der exe gelegt werden – siehe `modelle/LIESMICH.txt`.
+Alles, was das Programm speichert, liegt im Benutzerordner `%APPDATA%\Bild-SVG-Converter-MK2`:
+
+| Datei/Ordner | Inhalt |
+|---|---|
+| `Bild-SVG-Converter-MK2.ini` | Einstellungen, Fensterposition, zuletzt benutzte Ordner |
+| `modelle\` | optional: weitere KI-Modelle (`.onnx`), siehe [`modelle/LIESMICH.txt`](modelle/LIESMICH.txt) |
+
+Eine INI aus v2.0.0, die noch neben der exe liegt, wird beim ersten Start automatisch dorthin verschoben.
 
 ## exe bauen
 
@@ -57,13 +64,13 @@ Der Workflow `.github/workflows/build-exe.yml` läuft bei jedem Push:
 1. lädt das KI-Modell (mit Prüfsumme, zwischengespeichert),
 2. führt den Selbsttest mit dem Quellcode aus,
 3. baut mit PyInstaller eine einzelne `Bild-SVG-Converter-MK2.exe`,
-4. führt den Selbsttest mit der fertigen exe aus,
-5. packt das ZIP (und das Offline-Build-Kit) und lädt beides als Artefakt hoch,
+4. führt den Selbsttest mit der fertigen exe aus und prüft, dass neben der exe keine Datei entstanden ist,
+5. stellt die exe (und das Offline-Build-Kit als ZIP) als Artefakt bereit,
 6. erstellt einen **Release** `vX.Y.Z`, wenn es zu der Version in `freisteller/version.py` noch keinen gibt.
 
 Für einen neuen Release also `APP_VERSION` in `freisteller/version.py` erhöhen und pushen.
 
-Der Release enthält außerdem das Offline-Build-Kit als eigenes ZIP.
+Der Release enthält die exe direkt (`Bild-SVG-Converter-MK2-vX.Y.Z-windows.exe`) und zusätzlich das Offline-Build-Kit als ZIP.
 
 ### Offline auf einem Windows-10-PC ohne Internet
 
@@ -87,7 +94,7 @@ python build/modell_laden.py
 python app.py
 ```
 
-Selbsttest ohne Fenster: `python app.py --selftest` (bzw. `Bild-SVG-Converter-MK2.exe --selftest`, Ergebnis in `selbsttest.log`).
+Selbsttest ohne Fenster: `python app.py --selftest` bzw. `Bild-SVG-Converter-MK2.exe --selftest` (Exit-Code 0 = bestanden). Mit `--selftest-log <datei>` wird das Ergebnis zusätzlich in eine Datei geschrieben.
 
 ## Aufbau
 
@@ -103,7 +110,7 @@ freisteller/
   svg_export.py                SVG pixelgenau / Vektor (vtracer)
   pfade.py, version.py
 assets/                        Icon, Pfeilgrafiken
-modelle/                       KI-Modell (wird beim Build geladen)
+modelle/                       KI-Modell (wird beim Build geladen und in die exe eingebaut)
 build/                         PyInstaller-Spezifikation, Hilfsskripte,
                                requirements-build.txt (PyInstaller-Version)
 offline_build_kit/             Offline-Build-Kit (Mac lädt, Win10 baut)

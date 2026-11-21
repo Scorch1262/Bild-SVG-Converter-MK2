@@ -1,6 +1,6 @@
 @echo off
 REM ============================================================
-REM  Bild-SVG Converter MK2 - Offline-Build-Kit v1.0.0
+REM  Bild-SVG Converter MK2 - Offline-Build-Kit v1.1.0
 REM  Schritt 3 von 3 - auf dem Windows-10-PC ausfuehren, NACHDEM
 REM  Schritt 2 (Pakete installieren) einmal erfolgreich lief.
 REM
@@ -23,7 +23,7 @@ set "PROJEKTNAME=Bild-SVG-Converter-MK2"
 set "PY=%~dp0venv\Scripts\python.exe"
 
 echo.
-echo === Bild-SVG Converter MK2 - Offline-Build-Kit v1.0.0 ===
+echo === Bild-SVG Converter MK2 - Offline-Build-Kit v1.1.0 ===
 echo === Schritt 3: exe bauen ===
 echo.
 
@@ -181,15 +181,24 @@ if not exist "build_tmp\dist\!PROJEKTNAME!.exe" (
 echo.
 echo [5/5] Selbsttest der fertigen exe ...
 set "QT_QPA_PLATFORM=offscreen"
-start "" /wait "build_tmp\dist\!PROJEKTNAME!.exe" --selftest
+start "" /wait "build_tmp\dist\!PROJEKTNAME!.exe" --selftest --selftest-log "!KITDIR!build_tmp\selbsttest.log"
 set "TESTERR=!errorlevel!"
 set "QT_QPA_PLATFORM="
-if exist "build_tmp\dist\selbsttest.log" type "build_tmp\dist\selbsttest.log"
+if exist "build_tmp\selbsttest.log" type "build_tmp\selbsttest.log"
 if not "!TESTERR!"=="0" (
     echo [FEHLER] Der Selbsttest der exe ist fehlgeschlagen ^(Exit-Code !TESTERR!^).
     pause
     exit /b 1
 )
+REM --- Kontrolle: die exe darf nichts neben sich ablegen ---
+set "NEBEN="
+for /f "delims=" %%n in ('dir /b /a-d "build_tmp\dist" 2^>nul ^| findstr /v /i /x /c:"Bild-SVG-Converter-MK2.exe"') do set "NEBEN=%%n"
+if defined NEBEN (
+    echo [FEHLER] Neben der exe ist eine Datei entstanden: !NEBEN!
+    pause
+    exit /b 1
+)
+echo    neben der exe liegt nichts - ok
 
 move /y "build_tmp\dist\!PROJEKTNAME!.exe" "fertige_exe\!EXENAME!.exe" >nul
 
@@ -205,9 +214,10 @@ echo    %~dp0fertige_exe
 echo  liegt jetzt:
 dir /b "fertige_exe"
 echo.
-echo  Die exe in einen eigenen Ordner legen und starten - dort wird
-echo  Bild-SVG-Converter-MK2.ini angelegt. Das KI-Modell ist in der
-echo  exe enthalten, das Programm arbeitet komplett offline.
+echo  Das ist eine einzige Datei - einfach irgendwohin kopieren und
+echo  starten. Neben der exe entsteht nichts: Einstellungen liegen in
+echo  %%APPDATA%%\Bild-SVG-Converter-MK2. Das KI-Modell ist in der exe
+echo  enthalten, das Programm arbeitet komplett offline.
 echo ============================================================
 echo.
 pause

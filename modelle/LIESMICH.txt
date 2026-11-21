@@ -1,20 +1,28 @@
-Ordner "modelle"
-================
+Ordner "modelle" (im Quellcode)
+==============================
 
-Das Standard-KI-Modell (isnet-general-use.onnx) ist bereits in der exe
-enthalten. Dieser Ordner ist nur für zusätzliche, eigene Modelle gedacht.
+Hierher lädt "python build/modell_laden.py" das Standard-KI-Modell
+isnet-general-use.onnx. Beim Build wird es in die exe eingebaut – die
+fertige exe braucht diesen Ordner NICHT. Das Modell liegt wegen seiner
+Größe (178 MB) nicht im Git-Repository.
 
-Jede .onnx-Datei, die hier neben der exe liegt, erscheint beim nächsten
-Start in der Auswahl "Modell". Erkannt werden u. a. die Modelle aus dem
-Projekt rembg (https://github.com/danielgatis/rembg/releases/tag/v0.0.0):
 
-  isnet-general-use.onnx   Allgemein (Standard)
+Weitere, eigene Modelle für die fertige exe
+-------------------------------------------
+
+Die exe legt nichts neben sich ab. Zusätzliche .onnx-Modelle gehören in
+den Benutzerordner:
+
+    %APPDATA%\Bild-SVG-Converter-MK2\modelle\
+
+Jede .onnx-Datei dort erscheint beim nächsten Start in der Auswahl
+"Modell". Erkannt werden u. a. die Modelle aus dem Projekt rembg
+(https://github.com/danielgatis/rembg/releases/tag/v0.0.0):
+
+  isnet-general-use.onnx   Allgemein (Standard, bereits in der exe)
   isnet-anime.onnx         Zeichnungen / Anime
   u2net.onnx               U²-Net
   u2netp.onnx              U²-Net klein (schnell)
   u2net_human_seg.onnx     Personen
   silueta.onnx             Silueta (klein)
   BiRefNet-*.onnx          BiRefNet (sehr genau, langsam)
-
-Im Quellcode-Ordner lädt "python build/modell_laden.py" das Standardmodell
-hierher (wird für den Build benötigt, liegt aber nicht im Git-Repository).

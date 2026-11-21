@@ -65,22 +65,24 @@ jobs:
         shell: pwsh
         run: |
           $env:QT_QPA_PLATFORM = "offscreen"
-          $p = Start-Process -FilePath "dist/Bild-SVG-Converter-MK2.exe" -ArgumentList "--selftest" -Wait -PassThru
-          if (Test-Path dist/selbsttest.log) { Get-Content dist/selbsttest.log; Remove-Item dist/selbsttest.log }
+          $log = Join-Path $env:RUNNER_TEMP "selbsttest.log"
+          $p = Start-Process -FilePath "dist/Bild-SVG-Converter-MK2.exe" -ArgumentList "--selftest","--selftest-log","`"$log`"" -Wait -PassThru
+          if (Test-Path $log) { Get-Content $log }
           if ($p.ExitCode -ne 0) { throw "Selbsttest der exe fehlgeschlagen (Exit-Code $($p.ExitCode))" }
+          # Die exe darf nichts neben sich ablegen
+          $neben = Get-ChildItem dist | Where-Object { $_.Name -ne "Bild-SVG-Converter-MK2.exe" }
+          if ($neben) { $neben | ForEach-Object { Write-Host "Unerwartet neben der exe: $($_.Name)" }; throw "Neben der exe sind Dateien entstanden" }
+          Write-Host "Neben der exe liegt nichts – ok"
 
-      - name: ZIP packen
+      - name: Release-Dateien bereitstellen
         id: zip
         shell: pwsh
         run: |
           $v = "${{ steps.version.outputs.version }}"
           $name = "Bild-SVG-Converter-MK2-v$v-windows"
-          $ziel = "paket/$name"
-          New-Item -ItemType Directory -Force -Path "$ziel/modelle" | Out-Null
-          Copy-Item dist/Bild-SVG-Converter-MK2.exe $ziel/
-          Copy-Item README.md $ziel/
-          Copy-Item modelle/LIESMICH.txt $ziel/modelle/
-          Compress-Archive -Path "$ziel/*" -DestinationPath "paket/$name.zip" -Force
+          New-Item -ItemType Directory -Force -Path paket | Out-Null
+          # Nur die eine exe – keine Nebendateien
+          Copy-Item dist/Bild-SVG-Converter-MK2.exe "paket/$name.exe"
           # Offline-Build-Kit zusätzlich als eigenes ZIP
           Compress-Archive -Path offline_build_kit -DestinationPath "paket/Bild-SVG-Converter-MK2-v$v-offline-build-kit.zip" -Force
           "name=$name" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
@@ -90,7 +92,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.zip.outputs.name }}
-          path: paket/*.zip
+          path: paket/*
           retention-days: 30
 
       - name: Gibt es den Release schon?
@@ -118,10 +120,10 @@ jobs:
           name: Bild-SVG Converter MK2 v${{ steps.version.outputs.version }}
           target_commitish: ${{ github.sha }}
           files: |
-            paket/${{ steps.zip.outputs.name }}.zip
+            paket/${{ steps.zip.outputs.name }}.exe
             paket/Bild-SVG-Converter-MK2-v${{ steps.version.outputs.version }}-offline-build-kit.zip
           body: |
             Bild-SVG Converter MK2 v${{ steps.version.outputs.version }}
 
-            - `Bild-SVG-Converter-MK2-v${{ steps.version.outputs.version }}-windows.zip`: entpacken und `Bild-SVG-Converter-MK2.exe` starten. Das KI-Modell ist in der exe enthalten, das Programm arbeitet komplett offline.
+            - `Bild-SVG-Converter-MK2-v${{ steps.version.outputs.version }}-windows.exe`: herunterladen und starten – eine einzige Datei, keine Installation, keine Nebendateien. Das KI-Modell ist in der exe enthalten, das Programm arbeitet komplett offline. Einstellungen liegen in `%APPDATA%\Bild-SVG-Converter-MK2`.
             - `...-offline-build-kit.zip`: exe auf einem Windows-10-PC ohne Internet selbst bauen (Mac lädt die Pakete) – siehe `ANLEITUNG.md` im Kit.

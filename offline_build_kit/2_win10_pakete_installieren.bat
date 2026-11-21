@@ -1,6 +1,6 @@
 @echo off
 REM ============================================================
-REM  Bild-SVG Converter MK2 - Offline-Build-Kit v1.0.0
+REM  Bild-SVG Converter MK2 - Offline-Build-Kit v1.1.0
 REM  Schritt 2 von 3 - auf dem Windows-10-PC ausfuehren.
 REM  Python 3.11 (64-Bit) muss auf diesem PC bereits installiert sein.
 REM
@@ -14,7 +14,7 @@ setlocal
 cd /d "%~dp0"
 
 echo.
-echo === Bild-SVG Converter MK2 - Offline-Build-Kit v1.0.0 ===
+echo === Bild-SVG Converter MK2 - Offline-Build-Kit v1.1.0 ===
 echo === Schritt 2: Pakete offline installieren ===
 echo.
 

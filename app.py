@@ -3,6 +3,10 @@
 Aufruf:
     Bild-SVG-Converter-MK2.exe [bild]       Programm starten (optional mit Bild)
     Bild-SVG-Converter-MK2.exe --selftest   Funktionstest ohne Fenster (Exit-Code 0 = ok)
+        [--selftest-log <datei>]           Ergebnis zusätzlich in eine Datei schreiben
+
+Die exe legt keine Dateien neben sich ab. Einstellungen und eigene
+KI-Modelle liegen in %APPDATA%\\Bild-SVG-Converter-MK2.
 """
 
 from __future__ import annotations
@@ -96,11 +100,15 @@ def _selbsttest() -> int:
     text = "\n".join(zeilen)
     if sys.stdout is not None:  # in der Fenster-exe gibt es keine Konsole
         print(text)
-    try:
-        from freisteller.pfade import programm_ordner
-        (programm_ordner() / "selbsttest.log").write_text(text + "\n", encoding="utf-8")
-    except OSError:
-        pass
+    # Protokolldatei nur auf Wunsch (--selftest-log <pfad>), damit
+    # neben der exe nichts entsteht
+    if "--selftest-log" in sys.argv:
+        i = sys.argv.index("--selftest-log")
+        if i + 1 < len(sys.argv):
+            try:
+                Path(sys.argv[i + 1]).write_text(text + "\n", encoding="utf-8")
+            except OSError:
+                pass
     return 0 if ok else 1
 
 

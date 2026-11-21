@@ -1,10 +1,19 @@
-"""Pfade für Ressourcen, Modelle und Einstellungen (Quellcode und exe)."""
+"""Pfade für Ressourcen, Modelle und Einstellungen.
+
+Die exe legt NICHTS neben sich ab. Einstellungen und eigene Modelle
+liegen im Benutzerordner:
+    Windows:  %APPDATA%\\Bild-SVG-Converter-MK2\\
+    sonst:    ~/.config/Bild-SVG-Converter-MK2/
+"""
 
 from __future__ import annotations
 
 import os
+import shutil
 import sys
 from pathlib import Path
+
+from .version import APP_NAME
 
 
 def ist_exe() -> bool:
@@ -12,7 +21,7 @@ def ist_exe() -> bool:
 
 
 def programm_ordner() -> Path:
-    """Ordner, in dem die exe bzw. app.py liegt."""
+    """Ordner, in dem die exe bzw. app.py liegt (wird nur gelesen)."""
     if ist_exe():
         return Path(sys.executable).resolve().parent
     return Path(__file__).resolve().parent.parent
@@ -29,13 +38,30 @@ def ressource(*teile: str) -> Path:
     return ressourcen_ordner().joinpath(*teile)
 
 
+def benutzer_ordner(anlegen: bool = True) -> Path:
+    """Eigener Ordner im Benutzerprofil für Einstellungen und Modelle."""
+    basis = os.environ.get("APPDATA")
+    ordner = Path(basis) / APP_NAME if basis else Path.home() / ".config" / APP_NAME
+    if anlegen:
+        try:
+            ordner.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            pass
+    return ordner
+
+
+def eigene_modelle_ordner() -> Path:
+    """Ordner für zusätzliche .onnx-Modelle (im Benutzerordner)."""
+    return benutzer_ordner(anlegen=False) / "modelle"
+
+
 def modell_ordner() -> list[Path]:
     """Alle Ordner, in denen nach .onnx-Modellen gesucht wird.
 
-    Reihenfolge: Ordner 'modelle' neben der exe (eigene Modelle),
-    dann die in die exe eingebetteten Modelle.
+    Reihenfolge: eigene Modelle im Benutzerordner, dann die in die exe
+    eingebetteten Modelle (bzw. beim Quellcode der Ordner 'modelle').
     """
-    kandidaten = [programm_ordner() / "modelle", ressource("modelle")]
+    kandidaten = [eigene_modelle_ordner(), ressource("modelle")]
     gesehen: list[Path] = []
     for k in kandidaten:
         try:
@@ -48,17 +74,16 @@ def modell_ordner() -> list[Path]:
 
 
 def einstellungen_datei() -> Path:
-    """INI-Datei neben der exe; falls dort nicht beschreibbar, in %APPDATA%."""
-    neben = programm_ordner() / "Bild-SVG-Converter-MK2.ini"
-    try:
-        if neben.exists():
-            if os.access(neben, os.W_OK):
-                return neben
-        elif os.access(neben.parent, os.W_OK):
-            return neben
-    except OSError:
-        pass
-    basis = Path(os.environ.get("APPDATA") or Path.home() / ".config")
-    ziel = basis / "Bild-SVG-Converter-MK2"
-    ziel.mkdir(parents=True, exist_ok=True)
-    return ziel / "Bild-SVG-Converter-MK2.ini"
+    """INI-Datei im Benutzerordner.
+
+    Eine INI aus v2.0.0, die noch neben der exe liegt, wird einmalig
+    in den Benutzerordner verschoben, damit neben der exe nichts bleibt.
+    """
+    ziel = benutzer_ordner() / f"{APP_NAME}.ini"
+    alt = programm_ordner() / f"{APP_NAME}.ini"
+    if ist_exe() and alt.is_file() and not ziel.exists():
+        try:
+            shutil.move(str(alt), str(ziel))
+        except OSError:
+            pass
+    return ziel

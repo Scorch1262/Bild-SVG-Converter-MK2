@@ -1,4 +1,4 @@
-"""Hauptfenster von Bild-Freisteller-MK1."""
+"""Hauptfenster von Bild-SVG-Converter-MK2."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ from . import theme
 from .ansicht import HINTERGRUENDE, BildAnsicht
 from .bausteine import FarbKnopf, Karte, SchieberZeile, Segmente, trenner
 from .pfade import einstellungen_datei
-from .version import APP_NAME, APP_VERSION
+from .version import APP_TITEL, APP_VERSION
 
 BILD_ENDUNGEN = (".png", ".jpg", ".jpeg", ".bmp", ".webp", ".tif", ".tiff",
                  ".gif", ".ico", ".jfif", ".tga")
@@ -104,7 +104,7 @@ def svg_rendern(svg: str, max_seite: int = 3000) -> QImage:
 class Hauptfenster(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle(f"{APP_NAME}  v{APP_VERSION}")
+        self.setWindowTitle(f"{APP_TITEL}  v{APP_VERSION}")
         self.setAcceptDrops(True)
         self.resize(1400, 880)
         self.setMinimumSize(980, 640)
@@ -166,15 +166,15 @@ class Hauptfenster(QMainWindow):
         kl.setSpacing(10)
         punkt = QLabel("●")
         punkt.setObjectName("Punkt")
-        titel = QLabel("Bild-Freisteller")
+        titel = QLabel("Bild-SVG Converter")
         titel.setObjectName("Titel")
-        mk1 = QLabel("MK1")
-        mk1.setObjectName("Chip")
+        chip_mk = QLabel("MK2")
+        chip_mk.setObjectName("Chip")
         self.lbl_datei = QLabel("Kein Bild geladen")
         self.lbl_datei.setObjectName("Untertitel")
         kl.addWidget(punkt)
         kl.addWidget(titel)
-        kl.addWidget(mk1)
+        kl.addWidget(chip_mk)
         kl.addSpacing(14)
         kl.addWidget(self.lbl_datei, 1)
         self.fortschritt = QProgressBar()

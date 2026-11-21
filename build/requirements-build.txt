@@ -1,0 +1,2 @@
+# Werkzeuge zum Bauen der exe (GitHub Actions, build_lokal.bat, Offline-Build-Kit)
+pyinstaller==6.22.3

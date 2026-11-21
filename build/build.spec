@@ -1,4 +1,4 @@
-# PyInstaller-Spezifikation für Bild-Freisteller-MK1 (eine einzelne exe)
+# PyInstaller-Spezifikation für Bild-SVG-Converter-MK2 (eine einzelne exe)
 # Aufruf aus dem Projektordner:  pyinstaller --noconfirm --clean build/build.spec
 
 import os
@@ -7,7 +7,7 @@ from pathlib import Path
 from PyInstaller.utils.hooks import collect_dynamic_libs
 
 WURZEL = Path(SPECPATH).parent
-NAME = "Bild-Freisteller-MK1"
+NAME = "Bild-SVG-Converter-MK2"
 
 modell = WURZEL / "modelle" / "isnet-general-use.onnx"
 daten = [(str(WURZEL / "assets"), "assets")]

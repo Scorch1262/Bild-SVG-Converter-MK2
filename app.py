@@ -1,8 +1,8 @@
-"""Bild-Freisteller-MK1 – Startdatei.
+"""Bild-SVG-Converter-MK2 – Startdatei.
 
 Aufruf:
-    Bild-Freisteller-MK1.exe [bild]       Programm starten (optional mit Bild)
-    Bild-Freisteller-MK1.exe --selftest   Funktionstest ohne Fenster (Exit-Code 0 = ok)
+    Bild-SVG-Converter-MK2.exe [bild]       Programm starten (optional mit Bild)
+    Bild-SVG-Converter-MK2.exe --selftest   Funktionstest ohne Fenster (Exit-Code 0 = ok)
 """
 
 from __future__ import annotations

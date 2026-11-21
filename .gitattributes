@@ -1,0 +1,3 @@
+# Windows-Skripte immer mit CRLF, Shell-Skripte immer mit LF
+*.bat text eol=crlf
+*.sh  text eol=lf

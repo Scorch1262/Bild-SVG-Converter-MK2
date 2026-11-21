@@ -49,7 +49,7 @@ def modell_ordner() -> list[Path]:
 
 def einstellungen_datei() -> Path:
     """INI-Datei neben der exe; falls dort nicht beschreibbar, in %APPDATA%."""
-    neben = programm_ordner() / "Bild-Freisteller-MK1.ini"
+    neben = programm_ordner() / "Bild-SVG-Converter-MK2.ini"
     try:
         if neben.exists():
             if os.access(neben, os.W_OK):
@@ -59,6 +59,6 @@ def einstellungen_datei() -> Path:
     except OSError:
         pass
     basis = Path(os.environ.get("APPDATA") or Path.home() / ".config")
-    ziel = basis / "Bild-Freisteller-MK1"
+    ziel = basis / "Bild-SVG-Converter-MK2"
     ziel.mkdir(parents=True, exist_ok=True)
-    return ziel / "Bild-Freisteller-MK1.ini"
+    return ziel / "Bild-SVG-Converter-MK2.ini"

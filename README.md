@@ -1,8 +1,8 @@
-# Bild-Freisteller-MK1
+# Bild-SVG Converter MK2
 
 Desktop-Programm für Windows: Bild per Drag & Drop hineinziehen, Hintergrund automatisch entfernen, Ergebnis als **SVG** (oder PNG) speichern. Läuft komplett offline – das KI-Modell ist in der exe enthalten.
 
-![Bild-Freisteller-MK1](docs/screenshot.png)
+![Bild-SVG Converter MK2](docs/screenshot.png)
 
 ## Funktionen
 
@@ -21,7 +21,7 @@ Desktop-Programm für Windows: Bild per Drag & Drop hineinziehen, Hintergrund au
   | Vektor – Farbflächen | echte, skalierbare Vektorpfade | Logos, Grafiken, Icons |
   | Vektor – Silhouette | einfarbiger Umriss des Motivs | Schneideplotter, Laser, Stempel |
 - Optional auf das Motiv zuschneiden (mit Rand), zusätzlich Export als transparentes **PNG**
-- Einstellungen werden in `Bild-Freisteller-MK1.ini` neben der exe gespeichert
+- Einstellungen werden in `Bild-SVG-Converter-MK2.ini` neben der exe gespeichert
 
 ## Bedienung
 
@@ -42,7 +42,7 @@ Desktop-Programm für Windows: Bild per Drag & Drop hineinziehen, Hintergrund au
 
 ## Installation
 
-Unter **Releases** die Datei `Bild-Freisteller-MK1-vX.Y.Z-windows.zip` herunterladen, entpacken und `Bild-Freisteller-MK1.exe` starten. Keine Installation nötig.
+Unter **Releases** die Datei `Bild-SVG-Converter-MK2-vX.Y.Z-windows.zip` herunterladen, entpacken und `Bild-SVG-Converter-MK2.exe` starten. Keine Installation nötig.
 
 Der erste Start dauert einige Sekunden, weil die exe ihre Bestandteile (inkl. KI-Modell) entpackt.
 
@@ -56,16 +56,28 @@ Der Workflow `.github/workflows/build-exe.yml` läuft bei jedem Push:
 
 1. lädt das KI-Modell (mit Prüfsumme, zwischengespeichert),
 2. führt den Selbsttest mit dem Quellcode aus,
-3. baut mit PyInstaller eine einzelne `Bild-Freisteller-MK1.exe`,
+3. baut mit PyInstaller eine einzelne `Bild-SVG-Converter-MK2.exe`,
 4. führt den Selbsttest mit der fertigen exe aus,
-5. packt das ZIP und lädt es als Artefakt hoch,
+5. packt das ZIP (und das Offline-Build-Kit) und lädt beides als Artefakt hoch,
 6. erstellt einen **Release** `vX.Y.Z`, wenn es zu der Version in `freisteller/version.py` noch keinen gibt.
 
 Für einen neuen Release also `APP_VERSION` in `freisteller/version.py` erhöhen und pushen.
 
-### Lokal unter Windows
+Der Release enthält außerdem das Offline-Build-Kit als eigenes ZIP.
 
-Python 3.10 – 3.12 installieren, dann `build_lokal.bat` ausführen. Ergebnis: `dist\Bild-Freisteller-MK1.exe`.
+### Offline auf einem Windows-10-PC ohne Internet
+
+Im Ordner [`offline_build_kit/`](offline_build_kit/ANLEITUNG.md) liegt ein Kit nach dem Prinzip „Mac lädt, Win10 baut":
+
+1. `1_mac_pakete_herunterladen.sh` (Mac mit Internet) lädt alle Pakete als Windows-Wheels für Python 3.11, das KI-Modell (mit Prüfsumme) und die Visual-C++-Laufzeit.
+2. `2_win10_pakete_installieren.bat` installiert alles offline in eine venv und prüft die Dateien per SHA256.
+3. `3_win10_exe_aus_zip_bauen.bat` baut mit `build/build.spec` dieselbe exe wie GitHub Actions und führt den Selbsttest aus → `fertige_exe\Bild-SVG-Converter-MK2-v<Version>-windows.exe`.
+
+Das Kit kann im Projektordner benutzt werden oder einzeln mit der Projekt-`.zip` daneben. Details in [`offline_build_kit/ANLEITUNG.md`](offline_build_kit/ANLEITUNG.md).
+
+### Lokal unter Windows (mit Internet)
+
+Python 3.11 oder 3.12 installieren, dann `build_lokal.bat` ausführen. Ergebnis: `dist\Bild-SVG-Converter-MK2.exe`.
 
 ### Aus dem Quellcode starten
 
@@ -75,7 +87,7 @@ python build/modell_laden.py
 python app.py
 ```
 
-Selbsttest ohne Fenster: `python app.py --selftest` (bzw. `Bild-Freisteller-MK1.exe --selftest`, Ergebnis in `selbsttest.log`).
+Selbsttest ohne Fenster: `python app.py --selftest` (bzw. `Bild-SVG-Converter-MK2.exe --selftest`, Ergebnis in `selbsttest.log`).
 
 ## Aufbau
 
@@ -92,10 +104,12 @@ freisteller/
   pfade.py, version.py
 assets/                        Icon, Pfeilgrafiken
 modelle/                       KI-Modell (wird beim Build geladen)
-build/                         PyInstaller-Spezifikation, Hilfsskripte
+build/                         PyInstaller-Spezifikation, Hilfsskripte,
+                               requirements-build.txt (PyInstaller-Version)
+offline_build_kit/             Offline-Build-Kit (Mac lädt, Win10 baut)
 .github/workflows/             GitHub-Actions-Workflow
 ```
 
 ## Verwendete Bibliotheken
 
-PySide6 (Qt), ONNX Runtime, NumPy, SciPy, Pillow, vtracer. KI-Modell *isnet-general-use* (DIS / IS-Net, Apache-2.0) aus dem Projekt rembg.
+PySide6-Essentials (Qt), ONNX Runtime, NumPy, SciPy, Pillow, vtracer. KI-Modell *isnet-general-use* (DIS / IS-Net, Apache-2.0) aus dem Projekt rembg.
